@@ -6,7 +6,10 @@ const express = require("express"),
   session = require("express-session"),
   massive = require("massive");
 require("dotenv").config();
+const path = require("path");
 
+console.log(path.join(__dirname + "/../build"));
+app.use("/", express.static(path.join(__dirname + "/../build")));
 massive(process.env.CONNECTION_STRING)
   .then(dbInstance => {
     app.set("db", dbInstance);
