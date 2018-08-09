@@ -6,7 +6,6 @@ import routes from "./routes";
 
 class App extends Component {
   render() {
-    console.log(process.env);
     return (
       <div className="App">
         <header className="App-header">

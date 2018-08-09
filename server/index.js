@@ -4,8 +4,7 @@ const express = require("express"),
   port = 3001,
   app = express(),
   session = require("express-session"),
-  massive = require("massive"),
-  path = require("path");
+  massive = require("massive");
 require("dotenv").config();
 
 massive(process.env.CONNECTION_STRING)
@@ -22,12 +21,8 @@ app.use(
   })
 );
 
-// console.log(path.join());
-
 app.use(cors());
 app.use(bodyParser.json());
-
-app.use("/", express.static(path.join(__dirname + "/../build")));
 
 app.get("/api/todos", (req, res) => {
   const db = req.app.get("db");
@@ -54,10 +49,6 @@ app.delete("/api/todos/:id", (req, res) => {
     })
     .catch(console.log);
 });
-
-app.use("*", (req, res) =>
-  res.sendFile(path.join(__dirname + "/../build/index.html"))
-);
 
 app.listen(port, function() {
   console.log("Server listening on port", port);
