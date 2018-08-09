@@ -4,7 +4,8 @@ const express = require("express"),
   port = 3001,
   app = express(),
   session = require("express-session"),
-  massive = require("massive");
+  massive = require("massive"),
+  path = require("path");
 require("dotenv").config();
 
 massive(process.env.CONNECTION_STRING)
@@ -21,13 +22,16 @@ app.use(
   })
 );
 
+// console.log(path.join());
+
 app.use(cors());
 app.use(bodyParser.json());
 
+app.use("/", express.static(path.join(__dirname + "/../build")));
+
 app.get("/api/todos", (req, res) => {
   const db = req.app.get("db");
-  db
-    .get_todos()
+  db.get_todos()
     .then(todos => {
       return res.send(todos);
     })
@@ -36,8 +40,7 @@ app.get("/api/todos", (req, res) => {
 app.post("/api/todos", (req, res) => {
   const db = req.app.get("db");
   console.log(req.body.todo);
-  db
-    .post_todos(req.body.todo)
+  db.post_todos(req.body.todo)
     .then(todos => {
       return res.send(todos);
     })
@@ -45,13 +48,16 @@ app.post("/api/todos", (req, res) => {
 });
 app.delete("/api/todos/:id", (req, res) => {
   const db = req.app.get("db");
-  db
-    .remove_todo(req.params.id)
+  db.remove_todo(req.params.id)
     .then(todos => {
       return res.send(todos);
     })
     .catch(console.log);
 });
+
+app.use("*", (req, res) =>
+  res.sendFile(path.join(__dirname + "/../build/index.html"))
+);
 
 app.listen(port, function() {
   console.log("Server listening on port", port);
