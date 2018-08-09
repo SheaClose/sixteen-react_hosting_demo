@@ -9,17 +9,6 @@ require("dotenv").config();
 
 massive(process.env.CONNECTION_STRING)
   .then(dbInstance => {
-    const table = dbInstance.tables.find(c => c.name == "todos");
-    if (!table) {
-      dbInstance
-        .run(
-          `create table todos (
-        id serial primary key,
-        todo varchar(40)
-      )`
-        )
-        .then(console.log);
-    }
     app.set("db", dbInstance);
   })
   .catch(console.log);
@@ -31,9 +20,9 @@ app.use(
     saveUninitialized: process.env.SAVEUNINITIALIZED
   })
 );
+
 app.use(cors());
 app.use(bodyParser.json());
-app.use("/", express.static(__dirname + "/../build"));
 
 app.get("/api/todos", (req, res) => {
   const db = req.app.get("db");
@@ -62,11 +51,6 @@ app.delete("/api/todos/:id", (req, res) => {
       return res.send(todos);
     })
     .catch(console.log);
-});
-
-const path = require("path");
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "/../build/index.html"));
 });
 
 app.listen(port, function() {
